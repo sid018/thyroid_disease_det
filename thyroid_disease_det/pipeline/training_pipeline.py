@@ -5,10 +5,10 @@ from thyroid_disease_det.logger import logging
 from thyroid_disease_det.components.data_ingestion import DataIngestion
 
 
-from thyroid_disease_det.entity.config_entity import (DataIngestionConfig,)
+from thyroid_disease_det.entity.config_entity import (DataIngestionConfig)
 
 
-from thyroid_disease_det.entity.artifact_entity import (DataIngestionArtifact,)
+from thyroid_disease_det.entity.artifact_entity import (DataIngestionArtifact)
 
 
 class TrainPipeline:
@@ -19,7 +19,7 @@ class TrainPipeline:
 
 
 
-def start_data_ingestion(self) -> DataIngestionArtifact:
+    def start_data_ingestion(self) -> DataIngestionArtifact:
         """
         This method of TrainPipeline class is responsible for starting data ingestion component
         """
