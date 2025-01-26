@@ -40,7 +40,7 @@ class TrainPipeline:
 
 
 
-def run_pipeline(self, ) -> None:
+    def run_pipeline(self, ) -> None:
         """
         This method of TrainPipeline class is responsible for running complete pipeline
         """
