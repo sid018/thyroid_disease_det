@@ -3,11 +3,7 @@ from thyroid_disease_det.exception import thyroid_disease_detException
 from thyroid_disease_det.logger import logging
 
 from thyroid_disease_det.components.data_ingestion import DataIngestion
-from thyroid_disease_det.components.data_validation import DataValidation
-from thyroid_disease_det.components.data_transformation import DataTransformation
-from thyroid_disease_det.components.model_trainer import ModelTrainer
-from thyroid_disease_det.components.model_evaluation import ModelEvaluation
-from thyroid_disease_det.components.model_pusher import ModelPusher
+
 
 from thyroid_disease_det.entity.config_entity import (DataIngestionConfig,)
 
