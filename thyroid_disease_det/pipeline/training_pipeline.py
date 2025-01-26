@@ -1,18 +1,18 @@
 import sys
-from us_visa.exception import USvisaException
-from us_visa.logger import logging
+from thyroid_disease_det.exception import thyroid_disease_detException
+from thyroid_disease_det.logger import logging
 
-from us_visa.components.data_ingestion import DataIngestion
-from us_visa.components.data_validation import DataValidation
-from us_visa.components.data_transformation import DataTransformation
-from us_visa.components.model_trainer import ModelTrainer
-from us_visa.components.model_evaluation import ModelEvaluation
-from us_visa.components.model_pusher import ModelPusher
+from thyroid_disease_det.components.data_ingestion import DataIngestion
+from thyroid_disease_det.components.data_validation import DataValidation
+from thyroid_disease_det.components.data_transformation import DataTransformation
+from thyroid_disease_det.components.model_trainer import ModelTrainer
+from thyroid_disease_det.components.model_evaluation import ModelEvaluation
+from thyroid_disease_det.components.model_pusher import ModelPusher
 
-from us_visa.entity.config_entity import (DataIngestionConfig,)
+from thyroid_disease_det.entity.config_entity import (DataIngestionConfig,)
 
 
-from us_visa.entity.artifact_entity import (DataIngestionArtifact,)
+from thyroid_disease_det.entity.artifact_entity import (DataIngestionArtifact,)
 
 
 class TrainPipeline:
@@ -38,7 +38,7 @@ def start_data_ingestion(self) -> DataIngestionArtifact:
             )
             return data_ingestion_artifact
         except Exception as e:
-            raise USvisaException(e, sys) from e
+            raise thyroid_disease_detException(e, sys) from e
 
 
 
@@ -57,4 +57,4 @@ def run_pipeline(self, ) -> None:
 
 
         except Exception as e:
-            raise USvisaException(e, sys)   
+            raise thyroid_disease_detException(e, sys)   

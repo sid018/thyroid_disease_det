@@ -1,6 +1,6 @@
-from us_visa.configuration.mongo_db_connection import MongoDBClient
-from us_visa.constants import DATABASE_NAME
-from us_visa.exception import USvisaException
+from thyroid_disease_det.configuration.mongo_db_connection import MongoDBClient
+from thyroid_disease_det.constants import DATABASE_NAME
+from thyroid_disease_det.exception import thyroid_disease_detException
 import pandas as pd
 import sys
 from typing import Optional
@@ -8,7 +8,7 @@ import numpy as np
 
 
 
-class USvisaData:
+class thyroid_disease_detData:
     """
     This class help to export entire mongo db record as pandas dataframe
     """
@@ -19,7 +19,7 @@ class USvisaData:
         try:
             self.mongo_client = MongoDBClient(database_name=DATABASE_NAME)
         except Exception as e:
-            raise USvisaException(e,sys)
+            raise thyroid_disease_detException(e,sys)
         
 
     def export_collection_as_dataframe(self,collection_name:str,database_name:Optional[str]=None)->pd.DataFrame:
@@ -39,4 +39,4 @@ class USvisaData:
             df.replace({"na":np.nan},inplace=True)
             return df
         except Exception as e:
-            raise USvisaException(e,sys)
+            raise thyroid_disease_detException(e,sys)
