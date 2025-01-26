@@ -1,6 +1,6 @@
 import sys
 
-from thyroid_disease_det.exception import USvisaException
+from thyroid_disease_det.exception import thyroid_disease_detException
 from thyroid_disease_det.logger import logging
 
 import os
@@ -32,4 +32,4 @@ class MongoDBClient:
             self.database_name = database_name
             logging.info("MongoDB connection succesfull")
         except Exception as e:
-            raise USvisaException(e,sys)
+            raise thyroid_disease_detException(e,sys)

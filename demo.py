@@ -1,4 +1,4 @@
-from thyroid_disease_det.pipline.training_pipeline import TrainPipeline
+from thyroid_disease_det.pipeline.training_pipeline import TrainPipeline
 
 
 pipline  = TrainPipeline()
