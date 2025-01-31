@@ -47,7 +47,7 @@ categorical_columns:
   - pregnant
   - thyroid_surgery
   - I131_treatment
-  _ query_hypothyroid
+  - query_hypothyroid
   - query_hyperthyroid
   - lithium
   - goitre
