@@ -75,7 +75,7 @@ continuous_columns:
   - T4U
   - FTI 
 
-binary_columns:
+or_columns:
   - on_thyroxine 
   - query_on_thyroxine 
   - on_antithyroid_medication
@@ -97,7 +97,7 @@ gender:
 
 
 
-or_columns:
+Target_column:
   - Class
 
 oh_columns:
