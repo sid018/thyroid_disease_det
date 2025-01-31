@@ -16,7 +16,7 @@ from thyroid_disease_det.entity.artifact_entity import (DataIngestionArtifact, D
 class TrainPipeline:
     def __init__(self):
         self.data_ingestion_config = DataIngestionConfig()
-         self.data_validation_config = DataValidationConfig()
+        self.data_validation_config = DataValidationConfig()
 
 
 
