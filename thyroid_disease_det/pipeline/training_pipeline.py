@@ -17,6 +17,7 @@ class TrainPipeline:
     def __init__(self):
         self.data_ingestion_config = DataIngestionConfig()
         self.data_validation_config = DataValidationConfig()
+        self.data_transformation_config = DataTransformationConfig()
 
 
 
@@ -79,7 +80,7 @@ class TrainPipeline:
             data_transformation_artifact = data_transformation.initiate_data_transformation()
             return data_transformation_artifact
         except Exception as e:
-            raise USvisaException(e, sys)           
+            raise thyroid_disease_detException(e, sys)           
 
 
 
