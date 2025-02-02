@@ -169,9 +169,7 @@ class DataValidation:
             train_df = self.handle_missing_values(train_df)
             test_df = self.handle_missing_values(test_df)
 
-            # Drop empty columns to avoid drift detection errors
-            train_df = self.drop_empty_columns(train_df)
-            test_df = self.drop_empty_columns(test_df)
+            
 
             # Validate column structure
             if not self.validate_number_of_columns(train_df):
