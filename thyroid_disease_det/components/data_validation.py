@@ -115,7 +115,7 @@ class DataValidation:
         Drops only the column 'TBG' if it is completely empty (all NaN values).
         """
         try:
-          if 'TBG' in df.columns 
+          if 'TBG' in df.columns: 
             logging.info("Dropping empty column: 'TBG'")
             df = df.drop(columns=['TBG'])
 
