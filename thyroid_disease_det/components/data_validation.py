@@ -107,8 +107,8 @@ class DataValidation:
 
             # Ensure correct data type for numerical columns after KNN imputation
             for col in self._schema_config["numerical_columns"]:
-                train_df[col] = train_df[col].astype(float)
-                test_df[col] = test_df[col].astype(float)
+                df[col] = df[col].astype(float)
+                
 
 
             logging.info("Missing value imputation completed.")
