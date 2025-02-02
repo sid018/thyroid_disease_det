@@ -111,9 +111,9 @@ class DataValidation:
             raise thyroid_disease_detException(e, sys) from e
 
     def drop_empty_columns(self, df: DataFrame) -> DataFrame:
-    """
-    Drops only the column 'TBG' if it is completely empty (all NaN values).
-    """
+        """
+        Drops only the column 'TBG' if it is completely empty (all NaN values).
+        """
         try:
           if 'TBG' in df.columns and df['TBG'].isna().all():
             logging.info("Dropping empty column: 'TBG'")
