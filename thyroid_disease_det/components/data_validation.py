@@ -97,7 +97,7 @@ class DataValidation:
             logging.info("Handling missing values in the dataset...")
 
             # Impute categorical columns with mode
-            for col in self._schema_config["categorical_columns"]:
+            for col in self._schema_config["gender"]:
                 df[col] = df[col].fillna(df[col].mode()[0])  # Fixes FutureWarning
 
             # Impute numerical columns using KNN Imputer
