@@ -19,7 +19,7 @@ class DataValidation:
     def __init__(self, data_ingestion_artifact: DataIngestionArtifact, data_validation_config: DataValidationConfig):
         """
         :param data_ingestion_artifact: Output reference of data ingestion artifact stage
-        :param data_validation_config: configuration for data validation
+        :param data_validation_config: Configuration for data validation
         """
         try:
             self.data_ingestion_artifact = data_ingestion_artifact
@@ -32,7 +32,7 @@ class DataValidation:
         """Validates the number of columns"""
         try:
             status = len(dataframe.columns) == len(self._schema_config["columns"])
-            logging.info(f"Is required column present: [{status}]")
+            logging.info(f"Are all required columns present? {status}")
             return status
         except Exception as e:
             raise thyroid_disease_detException(e, sys)
@@ -69,6 +69,21 @@ class DataValidation:
             return pd.read_csv(file_path)
         except Exception as e:
             raise thyroid_disease_detException(e, sys)
+
+    def replace_invalid_values_with_nan(self, df: DataFrame) -> DataFrame:
+        """
+        Replaces '?' values with NaN to handle missing data properly.
+        """
+        try:
+            logging.info("Replacing '?' with NaN...")
+            for column in df.columns:
+                count = df[column][df[column] == '?'].count()
+                if count != 0:
+                    df[column] = df[column].replace('?', np.nan)
+                    logging.info(f"Replaced {count} '?' values in column: {column}")
+            return df
+        except Exception as e:
+            raise thyroid_disease_detException(e, sys) from e
 
     def handle_missing_values(self, df: DataFrame) -> DataFrame:
         """
@@ -125,6 +140,10 @@ class DataValidation:
                 DataValidation.read_data(file_path=self.data_ingestion_artifact.trained_file_path),
                 DataValidation.read_data(file_path=self.data_ingestion_artifact.test_file_path),
             )
+
+            # Replace '?' with NaN before imputation
+            train_df = self.replace_invalid_values_with_nan(train_df)
+            test_df = self.replace_invalid_values_with_nan(test_df)
 
             # Handle missing values before drift detection
             train_df = self.handle_missing_values(train_df)
