@@ -111,17 +111,18 @@ class DataValidation:
             raise thyroid_disease_detException(e, sys) from e
 
     def drop_empty_columns(self, df: DataFrame) -> DataFrame:
-        """
-        Drops columns that contain only NaN values to prevent issues in drift detection.
-        """
+    """
+    Drops only the column 'TBG' if it is completely empty (all NaN values).
+    """
         try:
-            empty_cols = df.columns[df.isna().all()]
-            if len(empty_cols) > 0:
-                logging.info(f"Dropping empty columns: {list(empty_cols)}")
-                df.drop(columns=empty_cols, inplace=True)
-            return df
+          if 'TBG' in df.columns and df['TBG'].isna().all():
+            logging.info("Dropping empty column: 'TBG'")
+            df = df.drop(columns=['TBG'])
+
+          return df
         except Exception as e:
             raise thyroid_disease_detException(e, sys) from e
+
 
     def detect_dataset_drift(self, reference_df: DataFrame, current_df: DataFrame) -> bool:
         """Detects dataset drift using Evidently AI"""
@@ -155,6 +156,11 @@ class DataValidation:
                 DataValidation.read_data(file_path=self.data_ingestion_artifact.test_file_path),
             )
 
+            # Drop only 'TBG' column if empty
+            train_df = self.drop_empty_columns(train_df)
+            test_df = self.drop_empty_columns(test_df)
+
+            
             # Replace '?' with NaN before imputation
             train_df = self.replace_invalid_values_with_nan(train_df)
             test_df = self.replace_invalid_values_with_nan(test_df)
