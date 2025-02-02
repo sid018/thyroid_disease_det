@@ -66,7 +66,7 @@ class DataTransformation:
 
             logging.info("Initialized StandardScaler, OneHotEncoder, OrdinalEncoder")
 
-            oh_columns = self._schema_config['nominal_columns']
+            oh_columns = self._schema_config['oh_columns']
             or_columns = self._schema_config['or_columns']
             continuous_columns = self._schema_config['continuous_columns']
             #num_features = self._schema_config['num_features']
