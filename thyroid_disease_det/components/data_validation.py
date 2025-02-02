@@ -76,11 +76,13 @@ class DataValidation:
         """
         try:
             logging.info("Replacing '?' with NaN...")
-            for column in df.columns:
-                count = df[column][df[column] == '?'].count()
-                if count != 0:
-                    df[column] = df[column].replace('?', np.nan)
-                    logging.info(f"Replaced {count} '?' values in column: {column}")
+            df.replace('?', np.nan, inplace=True)  # Fixes FutureWarning
+
+            # Convert numerical columns to float to prevent issues with KNNImputer
+            for col in self._schema_config["numerical_columns"]:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+
+            logging.info("Invalid values replaced with NaN.")
             return df
         except Exception as e:
             raise thyroid_disease_detException(e, sys) from e
@@ -95,8 +97,8 @@ class DataValidation:
             logging.info("Handling missing values in the dataset...")
 
             # Impute categorical columns with mode
-            for col in self._schema_config["gender"]:
-                df[col].fillna(df[col].mode()[0], inplace=True)
+            for col in self._schema_config["categorical_columns"]:
+                df[col] = df[col].fillna(df[col].mode()[0])  # Fixes FutureWarning
 
             # Impute numerical columns using KNN Imputer
             numerical_columns = self._schema_config["numerical_columns"]
@@ -105,7 +107,19 @@ class DataValidation:
 
             logging.info("Missing value imputation completed.")
             return df
+        except Exception as e:
+            raise thyroid_disease_detException(e, sys) from e
 
+    def drop_empty_columns(self, df: DataFrame) -> DataFrame:
+        """
+        Drops columns that contain only NaN values to prevent issues in drift detection.
+        """
+        try:
+            empty_cols = df.columns[df.isna().all()]
+            if len(empty_cols) > 0:
+                logging.info(f"Dropping empty columns: {list(empty_cols)}")
+                df.drop(columns=empty_cols, inplace=True)
+            return df
         except Exception as e:
             raise thyroid_disease_detException(e, sys) from e
 
@@ -149,6 +163,10 @@ class DataValidation:
             train_df = self.handle_missing_values(train_df)
             test_df = self.handle_missing_values(test_df)
 
+            # Drop empty columns to avoid drift detection errors
+            train_df = self.drop_empty_columns(train_df)
+            test_df = self.drop_empty_columns(test_df)
+
             # Validate column structure
             if not self.validate_number_of_columns(train_df):
                 validation_error_msg += "Columns are missing in training dataframe. "
@@ -176,6 +194,5 @@ class DataValidation:
 
             logging.info(f"Data validation artifact: {data_validation_artifact}")
             return data_validation_artifact
-
         except Exception as e:
             raise thyroid_disease_detException(e, sys) from e
