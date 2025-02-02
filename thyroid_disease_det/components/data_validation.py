@@ -79,8 +79,8 @@ class DataValidation:
             df.replace('?', np.nan, inplace=True)  # Fixes FutureWarning
 
             # Convert numerical columns to float to prevent issues with KNNImputer
-            for col in self._schema_config["numerical_columns"]:
-                df[col] = pd.to_numeric(df[col], errors='coerce')
+            #for col in self._schema_config["numerical_columns"]:
+             #   df[col] = pd.to_numeric(df[col], errors='coerce')
 
             logging.info("Invalid values replaced with NaN.")
             return df
