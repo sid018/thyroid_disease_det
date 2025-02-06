@@ -92,7 +92,7 @@ class DataTransformation:
             report = data_drift_profile.json()
             json_report = json.loads(report)
 
-            write_yaml_file(file_path=self.data_tranformation_config.drift_report_file_path, content=json_report)
+            write_yaml_file(file_path=self.data_transformation_config.drift_report_file_path, content=json_report)
 
             n_features = json_report["data_drift"]["data"]["metrics"]["n_features"]
             n_drifted_features = json_report["data_drift"]["data"]["metrics"]["n_drifted_features"]
