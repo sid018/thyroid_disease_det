@@ -72,32 +72,49 @@ class DataValidation:
             raise thyroid_disease_detException(e, sys)
 
     def replace_invalid_values(self, df: DataFrame) -> DataFrame:
-        """
-        Replaces placeholder values (e.g., '?') with predefined sentinel values 
-        to allow processing in Evidently for data drift detection.
-        """
-        try:
-            logging.info("Replacing invalid values with placeholders...")
+    """
+    Replaces placeholder values (e.g., '?') with predefined sentinel values 
+    to allow processing in Evidently for data drift detection.
+    Handles empty columns by replacing them with a sentinel value or dropping them.
+    """
+    try:
+        logging.info("Replacing invalid values with placeholders...")
         
         # Define replacement values
-            sentinel_value_num = -999  # A large negative value unlikely to be real data
-            sentinel_value_cat = "missing_value"
+        sentinel_value_num = -999  # A large negative value unlikely to be real data
+        sentinel_value_cat = "missing_value"
+        
+        # Replace '?' with NaN
+        df.replace('?', np.nan, inplace=True)
 
-            df.replace('?', np.nan, inplace=True)  # Standard replacement with NaN first
-
+        # Handle empty columns
+        for col in df.columns:
+            # Check if column is completely empty (i.e., NaNs only)
+            if df[col].isnull().all():
+                logging.info(f"Column '{col}' is empty. Replacing with sentinel value.")
+                if col in self._schema_config["numerical_columns"]:
+                    df[col].fillna(sentinel_value_num, inplace=True)  # Fill empty numerical columns
+                elif col in self._schema_config["categorical_columns"]:
+                    df[col].fillna(sentinel_value_cat, inplace=True)  # Fill empty categorical columns
+                else:
+                    # Drop columns if they are not numerical or categorical columns
+                    logging.info(f"Column '{col}' will be dropped as it is empty and not part of the schema.")
+                    df.drop(col, axis=1, inplace=True)
+        
         # Replace NaNs in numerical columns with sentinel value
-            for col in self._schema_config["numerical_columns"]:
-                df[col] = pd.to_numeric(df[col], errors='coerce')  # Ensure numeric dtype
-                df[col].fillna(sentinel_value_num, inplace=True)
+        for col in self._schema_config["numerical_columns"]:
+            df[col] = pd.to_numeric(df[col], errors='coerce')  # Ensure numeric dtype
+            df[col].fillna(sentinel_value_num, inplace=True)
 
         # Replace NaNs in categorical columns with sentinel value
-            for col in self._schema_config["categorical_columns"]:
-                df[col].fillna(sentinel_value_cat, inplace=True)
+        for col in self._schema_config["categorical_columns"]:
+            df[col].fillna(sentinel_value_cat, inplace=True)
 
-            logging.info("Invalid values replaced with sentinel placeholders.")
-            return df
-        except Exception as e:
-            raise thyroid_disease_detException(e, sys) from e
+        logging.info("Invalid values replaced with sentinel placeholders.")
+        return df
+
+    except Exception as e:
+        raise thyroid_disease_detException(e, sys) from e
 
     
 
