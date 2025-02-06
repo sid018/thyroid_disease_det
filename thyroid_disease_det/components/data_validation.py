@@ -1,8 +1,9 @@
 import json
 import sys
+
 import numpy as np
 import pandas as pd
-from sklearn.impute import KNNImputer
+
 from evidently.model_profile import Profile
 from evidently.model_profile.sections import DataDriftProfileSection
 from pandas import DataFrame
@@ -70,64 +71,37 @@ class DataValidation:
         except Exception as e:
             raise thyroid_disease_detException(e, sys)
 
-    def replace_invalid_values_with_nan(self, df: DataFrame) -> DataFrame:
+    def replace_invalid_values(self, df: DataFrame) -> DataFrame:
         """
-        Replaces '?' values with NaN to handle missing data properly.
-        """
-        try:
-            logging.info("Replacing '?' with NaN...")
-            df.replace('?', np.nan, inplace=True)  # Fixes FutureWarning
-
-            # Convert numerical columns to float to prevent issues with KNNImputer
-            #for col in self._schema_config["numerical_columns"]:
-             #   df[col] = pd.to_numeric(df[col], errors='coerce')
-
-            logging.info("Invalid values replaced with NaN.")
-            return df
-        except Exception as e:
-            raise thyroid_disease_detException(e, sys) from e
-
-    def handle_missing_values(self, df: DataFrame) -> DataFrame:
-        """
-        Handles missing values before running drift detection:
-        - Uses mode for categorical columns
-        - Uses KNNImputer for numerical columns
+        Replaces placeholder values (e.g., '?') with predefined sentinel values 
+        to allow processing in Evidently for data drift detection.
         """
         try:
-            logging.info("Handling missing values in the dataset...")
+            logging.info("Replacing invalid values with placeholders...")
+        
+        # Define replacement values
+            sentinel_value_num = -999  # A large negative value unlikely to be real data
+            sentinel_value_cat = "missing_value"
 
-            # Impute categorical columns with mode
-            for col in self._schema_config["gender"]:
-                df[col] = df[col].fillna(df[col].mode()[0])  # Fixes FutureWarning
+            df.replace('?', np.nan, inplace=True)  # Standard replacement with NaN first
 
-            # Impute numerical columns using KNN Imputer
-            numerical_columns = self._schema_config["numerical_columns"]
-            imputer = KNNImputer(n_neighbors=3, weights="uniform", missing_values=np.nan)
-            df[numerical_columns] = imputer.fit_transform(df[numerical_columns])
-
-            # Ensure correct data type for numerical columns after KNN imputation
+        # Replace NaNs in numerical columns with sentinel value
             for col in self._schema_config["numerical_columns"]:
-                df[col] = df[col].astype(float)
-                
+                df[col] = pd.to_numeric(df[col], errors='coerce')  # Ensure numeric dtype
+                df[col].fillna(sentinel_value_num, inplace=True)
 
+        # Replace NaNs in categorical columns with sentinel value
+            for col in self._schema_config["categorical_columns"]:
+                df[col].fillna(sentinel_value_cat, inplace=True)
 
-            logging.info("Missing value imputation completed.")
+            logging.info("Invalid values replaced with sentinel placeholders.")
             return df
         except Exception as e:
             raise thyroid_disease_detException(e, sys) from e
 
-    def drop_empty_columns(self, df: DataFrame) -> DataFrame:
-        """
-        Drops only the column 'TBG' if it is completely empty (all NaN values).
-        """
-        try:
-          if 'TBG' in df.columns: 
-            logging.info("Dropping empty column: 'TBG'")
-            df = df.drop(columns=['TBG'])
+    
 
-          return df
-        except Exception as e:
-            raise thyroid_disease_detException(e, sys) from e
+    
 
 
     def detect_dataset_drift(self, reference_df: DataFrame, current_df: DataFrame) -> bool:
@@ -150,56 +124,73 @@ class DataValidation:
         except Exception as e:
             raise thyroid_disease_detException(e, sys) from e
 
+    
+
+            
+
+            
+
+            
+
     def initiate_data_validation(self) -> DataValidationArtifact:
-        """Initiates data validation including missing value handling and drift detection"""
+        """
+        Method Name :   initiate_data_validation
+        Description :   This method initiates the data validation component for the pipeline
+        
+        Output      :   Returns bool value based on validation results
+        On Failure  :   Write an exception log and then raise an exception
+        """
+
         try:
             validation_error_msg = ""
             logging.info("Starting data validation")
+            train_df, test_df = (DataValidation.read_data(file_path=self.data_ingestion_artifact.trained_file_path),
+                                 DataValidation.read_data(file_path=self.data_ingestion_artifact.test_file_path))
 
-            # Read the datasets
-            train_df, test_df = (
-                DataValidation.read_data(file_path=self.data_ingestion_artifact.trained_file_path),
-                DataValidation.read_data(file_path=self.data_ingestion_artifact.test_file_path),
-            )
-
-            # Drop only 'TBG' column if empty
-            train_df = self.drop_empty_columns(train_df)
-            test_df = self.drop_empty_columns(test_df)
-
+            
+            
             
             # Replace '?' with NaN before imputation
-            train_df = self.replace_invalid_values_with_nan(train_df)
-            test_df = self.replace_invalid_values_with_nan(test_df)
-
-            # Handle missing values before drift detection
-            train_df = self.handle_missing_values(train_df)
-            test_df = self.handle_missing_values(test_df)
-
+            train_df = self.replace_invalid_values(train_df)
+            test_df = self.replace_invalid_values(test_df)
             
+            
+            status = self.validate_number_of_columns(dataframe=train_df)
+            logging.info(f"All required columns present in training dataframe: {status}")
+            if not status:
+                validation_error_msg += f"Columns are missing in training dataframe."
+            status = self.validate_number_of_columns(dataframe=test_df)
 
-            # Validate column structure
-            if not self.validate_number_of_columns(train_df):
-                validation_error_msg += "Columns are missing in training dataframe. "
-            if not self.validate_number_of_columns(test_df):
-                validation_error_msg += "Columns are missing in test dataframe. "
+            logging.info(f"All required columns present in testing dataframe: {status}")
+            if not status:
+                validation_error_msg += f"Columns are missing in test dataframe."
 
-            if not self.is_column_exist(train_df):
-                validation_error_msg += "Columns are missing in training dataframe. "
-            if not self.is_column_exist(test_df):
-                validation_error_msg += "Columns are missing in test dataframe. "
+            status = self.is_column_exist(df=train_df)
+
+            if not status:
+                validation_error_msg += f"Columns are missing in training dataframe."
+            status = self.is_column_exist(df=test_df)
+
+            if not status:
+                validation_error_msg += f"columns are missing in test dataframe."
 
             validation_status = len(validation_error_msg) == 0
 
             if validation_status:
                 drift_status = self.detect_dataset_drift(train_df, test_df)
-                validation_error_msg = "Drift detected" if drift_status else "Drift not detected"
-
-            logging.info(f"Validation result: {validation_error_msg}")
+                if drift_status:
+                    logging.info(f"Drift detected.")
+                    validation_error_msg = "Drift detected"
+                else:
+                    validation_error_msg = "Drift not detected"
+            else:
+                logging.info(f"Validation_error: {validation_error_msg}")
+                
 
             data_validation_artifact = DataValidationArtifact(
                 validation_status=validation_status,
                 message=validation_error_msg,
-                drift_report_file_path=self.data_validation_config.drift_report_file_path,
+                drift_report_file_path=self.data_validation_config.drift_report_file_path
             )
 
             logging.info(f"Data validation artifact: {data_validation_artifact}")

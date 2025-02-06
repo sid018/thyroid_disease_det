@@ -25,7 +25,8 @@ columns:
   - T4U:                      category
   - FTI_measured:             category
   - FTI:                      category
-  - TBG_measured:             category
+  - TBG_measured: 
+  - TBG:                      category
   - referral_source:          category
   - Class:                    category
 
@@ -63,6 +64,7 @@ drop_columns:
   - T4U_measured
   - FTI_measured 
   - TBG_measured
+  - TBG
   
 
 # for data transformation
