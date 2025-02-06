@@ -2,6 +2,7 @@ import json
 import sys
 import numpy as np
 import pandas as pd
+from pandas import DataFrame
 
 from imblearn.combine import SMOTEENN
 from imblearn.over_sampling import SMOTE
