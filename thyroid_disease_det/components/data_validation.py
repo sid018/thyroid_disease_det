@@ -77,7 +77,7 @@ class DataValidation:
             to allow processing in Evidently for data drift detection.
             Handles empty columns by replacing them with a sentinel value or dropping them.
         """
-    try:
+        try:
             logging.info("Replacing invalid values with placeholders...")
         
         # Define replacement values
@@ -113,8 +113,8 @@ class DataValidation:
             logging.info("Invalid values replaced with sentinel placeholders.")
             return df
 
-    except Exception as e:
-        raise thyroid_disease_detException(e, sys) from e
+        except Exception as e:
+            raise thyroid_disease_detException(e, sys) from e
 
     
 
