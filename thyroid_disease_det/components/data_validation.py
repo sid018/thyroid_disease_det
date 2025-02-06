@@ -111,7 +111,7 @@ class DataValidation:
             df[col].fillna(sentinel_value_cat, inplace=True)
 
         logging.info("Invalid values replaced with sentinel placeholders.")
-        return df
+            return df
 
     except Exception as e:
         raise thyroid_disease_detException(e, sys) from e
