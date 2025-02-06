@@ -22,7 +22,7 @@ from thyroid_disease_det.entity.config_entity import DataTransformationConfig
 from thyroid_disease_det.entity.artifact_entity import DataTransformationArtifact, DataIngestionArtifact, DataValidationArtifact
 from thyroid_disease_det.exception import thyroid_disease_detException
 from thyroid_disease_det.logger import logging
-from thyroid_disease_det.utils.main_utils import save_object, save_numpy_array_data, read_yaml_file, drop_columns
+from thyroid_disease_det.utils.main_utils import save_object, save_numpy_array_data, read_yaml_file, drop_columns,write_yaml_file
 from thyroid_disease_det.entity.estimator import TargetValueMapping
 
 
