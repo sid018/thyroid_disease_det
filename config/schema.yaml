@@ -54,6 +54,7 @@ categorical_columns:
   - tumor
   - hypopituitary
   - psych
+  - TBG
   - referral_source
   - Class
 
