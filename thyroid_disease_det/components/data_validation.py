@@ -180,9 +180,9 @@ class DataValidation:
                 drift_status = self.detect_dataset_drift(train_df, test_df)
                 if drift_status:
                     logging.info(f"Drift detected.")
-                    validation_error_msg = "Drift detected"
+                    validation_error_msg = "Drift detected before transformation"
                 else:
-                    validation_error_msg = "Drift not detected"
+                    validation_error_msg = "Drift not detected before transformation"
             else:
                 logging.info(f"Validation_error: {validation_error_msg}")
                 
