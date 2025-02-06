@@ -118,7 +118,7 @@ class DataTransformation:
             logging.info("Got numerical cols from schema config")
 
             numeric_transformer = StandardScaler()
-            oh_transformer = OneHotEncoder() 
+            oh_transformer = OneHotEncoder(handle_unknown='ignore') 
             ordinal_encoder = OrdinalEncoder()
 
 
