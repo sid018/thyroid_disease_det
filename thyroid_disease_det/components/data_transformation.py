@@ -4,9 +4,7 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
-from imblearn.combine import SMOTEENN
-from imblearn.over_sampling import SMOTE
-from imblearn.under_sampling import EditedNearestNeighbours
+from imblearn.over_sampling import RandomOverSampler
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder, PowerTransformer
 from sklearn.compose import ColumnTransformer
@@ -238,13 +236,16 @@ class DataTransformation:
                     drift_error_msg = "Drift not detected after transformation"
             
                 logging.info("drift_error_msg: {drift_error_msg}")
-                logging.info("Applying SMOTEENN on Training dataset")
+                
 
-                smt = SMOTEENN(random_state=42,sampling_strategy='minority' ,smote=SMOTE(k_neighbors=1), enn=EditedNearestNeighbours(n_neighbors=1))
+                
 
-                input_feature_train_final, target_feature_train_final = smt.fit_resample(
-                    input_feature_train_arr, target_feature_train_df
-                )
+
+                logging.info("Applying RandomOverSampler on Training dataset")
+                ros = RandomOverSampler(random_state=42, sampling_strategy='minority')
+
+                # Apply RandomOverSampler only on the training set
+                input_feature_train_final, target_feature_train_final = ros.fit_resample(input_feature_train_arr, target_feature_train_df)
 
                 #logging.info("Applied SMOTEENN on training dataset")
 
