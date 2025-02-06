@@ -280,7 +280,7 @@ class DataTransformation:
                     transformed_object_file_path=self.data_transformation_config.transformed_object_file_path,
                     transformed_train_file_path=self.data_transformation_config.transformed_train_file_path,
                     transformed_test_file_path=self.data_transformation_config.transformed_test_file_path,
-                    validation_status=drift_status_after,
+                    drift_status=drift_status_after,
                     message= drift_error_msg,
                     drift_report_file_path=self.data_transformation_config.drift_report_file_path
                 )
