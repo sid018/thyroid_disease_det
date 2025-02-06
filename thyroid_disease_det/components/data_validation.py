@@ -72,11 +72,11 @@ class DataValidation:
             raise thyroid_disease_detException(e, sys)
 
     def replace_invalid_values(self, df: DataFrame) -> DataFrame:
-    """
-    Replaces placeholder values (e.g., '?') with predefined sentinel values 
-    to allow processing in Evidently for data drift detection.
-    Handles empty columns by replacing them with a sentinel value or dropping them.
-    """
+        """
+            Replaces placeholder values (e.g., '?') with predefined sentinel values 
+            to allow processing in Evidently for data drift detection.
+            Handles empty columns by replacing them with a sentinel value or dropping them.
+        """
     try:
         logging.info("Replacing invalid values with placeholders...")
         
