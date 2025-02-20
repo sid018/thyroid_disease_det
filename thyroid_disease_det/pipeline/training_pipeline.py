@@ -5,7 +5,7 @@ from thyroid_disease_det.logger import logging
 from thyroid_disease_det.components.data_ingestion import DataIngestion
 from thyroid_disease_det.components.data_validation import DataValidation
 from thyroid_disease_det.components.data_transformation import DataTransformation
-from us_visa.components.model_trainer import ModelTrainer
+from thyroid_disease_det.components.model_trainer import ModelTrainer
 
 
 from thyroid_disease_det.entity.config_entity import (DataIngestionConfig, 
