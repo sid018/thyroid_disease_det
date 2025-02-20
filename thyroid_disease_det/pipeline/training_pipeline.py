@@ -105,7 +105,7 @@ class TrainPipeline:
             return model_trainer_artifact
 
         except Exception as e:
-            raise USvisaException(e, sys)
+            raise thyroid_disease_detException(e, sys)
 
 
 
