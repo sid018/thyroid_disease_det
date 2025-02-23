@@ -231,7 +231,7 @@ class DataTransformation:
                 transformed_train_df = pd.DataFrame(input_feature_train_arr,columns=preprocessor.get_feature_names_out(input_feature_train_df.columns))
                 transformed_test_df = pd.DataFrame(input_feature_test_arr,columns=preprocessor.get_feature_names_out(input_feature_test_df.columns))
 
-                # ✅ Detect Drift After Transformation using DataValidation
+                # ✅ Detect Drift After Transformation 
                 drift_status_after = self.detect_dataset_drift(transformed_train_df, transformed_test_df)
                 if drift_status_after:
                     logging.info(f"Drift detected.")

@@ -6,19 +6,23 @@ from thyroid_disease_det.components.data_ingestion import DataIngestion
 from thyroid_disease_det.components.data_validation import DataValidation
 from thyroid_disease_det.components.data_transformation import DataTransformation
 from thyroid_disease_det.components.model_trainer import ModelTrainer
-
+from thyroid_disease_det.components.model_evaluation import ModelEvaluation
 
 from thyroid_disease_det.entity.config_entity import (DataIngestionConfig, 
                                                       DataValidationConfig,
                                                       DataTransformationConfig,
-                                                      ModelTrainerConfig)
+                                                      ModelTrainerConfig,
+                                                      ModelEvaluationConfig,
+                                                      ModelPusherConfig)
 
 
 from thyroid_disease_det.entity.artifact_entity import (DataIngestionArtifact, 
                                                         DataValidationArtifact,
                                                         DataTransformationArtifact,
-                                                        ModelTrainerArtifact)
-
+                                                        ModelTrainerArtifact,
+                                                        ModelEvaluationArtifact,
+                                                        ModelPusherArtifact)
+                                                        
 
 class TrainPipeline:
     def __init__(self):
@@ -109,6 +113,41 @@ class TrainPipeline:
 
 
 
+    def start_model_evaluation(self, data_transformation_artifact: DataTransformationArtifact,
+                               model_trainer_artifact: ModelTrainerArtifact) -> ModelEvaluationArtifact:
+        """
+        This method of TrainPipeline class is responsible for starting modle evaluation
+        """
+        try:
+            model_evaluation = ModelEvaluation(model_eval_config=self.model_evaluation_config,
+                                               data_transformation_artifact=data_transformation_artifact,
+                                               model_trainer_artifact=model_trainer_artifact)
+            model_evaluation_artifact = model_evaluation.initiate_model_evaluation()
+            return model_evaluation_artifact
+        except Exception as e:
+            raise thyroid_disease_detException(e, sys)       
+
+
+    def start_model_pusher(self, model_evaluation_artifact: ModelEvaluationArtifact) -> ModelPusherArtifact:
+        """
+        This method of TrainPipeline class is responsible for starting model pushing
+        """
+        try:
+            model_pusher = ModelPusher(model_evaluation_artifact=model_evaluation_artifact,
+                                       model_pusher_config=self.model_pusher_config
+                                       )
+            model_pusher_artifact = model_pusher.initiate_model_pusher()
+            return model_pusher_artifact
+        except Exception as e:
+            raise thyroid_disease_detException(e, sys)
+
+
+
+
+
+
+
+
     def run_pipeline(self, ) -> None:
         """
         This method of TrainPipeline class is responsible for running complete pipeline
@@ -119,8 +158,12 @@ class TrainPipeline:
             data_transformation_artifact = self.start_data_transformation(
                 data_ingestion_artifact=data_ingestion_artifact, data_validation_artifact=data_validation_artifact)
             model_trainer_artifact = self.start_model_trainer(data_transformation_artifact=data_transformation_artifact)
-
-
+            model_evaluation_artifact = self.start_model_evaluation(data_transformation_artifact=data_transformation_artifact,
+                                                                    model_trainer_artifact=model_trainer_artifact)
+            if not model_evaluation_artifact.is_model_accepted:
+                logging.info(f"Model not accepted.")
+                return None
+            model_pusher_artifact = self.start_model_pusher(model_evaluation_artifact=model_evaluation_artifact)
 
 
 
