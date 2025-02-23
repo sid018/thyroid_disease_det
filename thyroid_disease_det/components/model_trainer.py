@@ -47,9 +47,9 @@ class ModelTrainer:
             y_pred = model_obj.predict(x_test)
             
             accuracy = accuracy_score(y_test, y_pred) 
-            f1 = f1_score(y_test, y_pred,average='macro')  
-            precision = precision_score(y_test, y_pred,average='macro')  
-            recall = recall_score(y_test, y_pred,average='macro')
+            f1 = f1_score(y_test, y_pred,average='weighted')  
+            precision = precision_score(y_test, y_pred,average='weighted')  
+            recall = recall_score(y_test, y_pred,average='weighted')
             metric_artifact = ClassificationMetricArtifact(f1_score=f1, precision_score=precision, recall_score=recall)
             
             return best_model_detail, metric_artifact
