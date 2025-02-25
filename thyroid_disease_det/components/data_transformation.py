@@ -271,7 +271,12 @@ class DataTransformation:
                 ]
 
 
+                train_dir = os.path.dirname(self.data_transformation_config.transformed_train_file_path)
+                                            test_dir = os.path.dirname(self.data_transformation_config.transformed_test_file_path)
 
+                os.makedirs(train_dir, exist_ok=True)
+                os.makedirs(test_dir, exist_ok=True)
+                
                 train_df = pd.DataFrame(
                                         np.c_[input_feature_train_final, np.array(target_feature_train_final)],
                                         columns=list(preprocessor.get_feature_names_out(input_feature_train_df.columns)) 
