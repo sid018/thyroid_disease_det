@@ -270,9 +270,29 @@ class DataTransformation:
                     input_feature_test_final, np.array(target_feature_test_final)
                 ]
 
+
+
+                train_df = pd.DataFrame(
+                                        np.c_[input_feature_train_final, np.array(target_feature_train_final)],
+                                        columns=list(preprocessor.get_feature_names_out(input_feature_train_df.columns)) 
+                                        + [TARGET_COLUMN] # added column names
+                                        )
+
+                test_df = pd.DataFrame(
+                                       np.c_[input_feature_test_final, np.array(target_feature_test_final)],
+                                       columns=list(preprocessor.get_feature_names_out(input_feature_test_df.columns)) 
+                                       + [TARGET_COLUMN] # added column names
+                                       )    
+
+
+
+                train_df.to_csv(self.data_transformation_config.transformed_train_file_path, index=False, encoding='utf-8')
+                test_df.to_csv(self.data_transformation_config.transformed_test_file_path, index=False, encoding='utf-8')
                 save_object(self.data_transformation_config.transformed_object_file_path, preprocessor)
-                save_numpy_array_data(self.data_transformation_config.transformed_train_file_path, array=train_arr)
-                save_numpy_array_data(self.data_transformation_config.transformed_test_file_path, array=test_arr)
+                
+                #save_object(self.data_transformation_config.transformed_object_file_path, preprocessor)
+                #save_numpy_array_data(self.data_transformation_config.transformed_train_file_path, array=train_arr)
+                #save_numpy_array_data(self.data_transformation_config.transformed_test_file_path, array=test_arr)
 
                 logging.info("Saved the preprocessor object")
 

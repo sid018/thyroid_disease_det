@@ -25,7 +25,7 @@ columns:
   - T4U:                      category
   - FTI_measured:             category
   - FTI:                      category
-  - TBG_measured: 
+  - TBG_measured:             category
   - TBG:                      category
   - referral_source:          category
   - Class:                    category
