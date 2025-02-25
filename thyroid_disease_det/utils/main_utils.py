@@ -61,8 +61,8 @@ def save_numpy_array_data(file_path: str, array: np.array):
         raise thyroid_disease_detException(e, sys) from e
 
 
+
 def load_numpy_array_data(file_path: str) -> np.array:
-    def load_numpy_array_data(file_path: str) -> np.array:
     """
     Load data from a CSV file into a NumPy array.
     file_path: str location of CSV file to load
