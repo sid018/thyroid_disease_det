@@ -5,6 +5,7 @@ import numpy as np
 import dill
 import yaml
 from pandas import DataFrame
+import pandas as pd
 
 from us_visa.exception import thyroid_disease_detException
 from us_visa.logger import logging
@@ -63,13 +64,19 @@ def save_numpy_array_data(file_path: str, array: np.array):
 
 def load_numpy_array_data(file_path: str) -> np.array:
     """
-    load numpy array data from file
-    file_path: str location of file to load
+    Load data from a CSV file into a NumPy array.
+    file_path: str location of CSV file to load
     return: np.array data loaded
     """
     try:
-        with open(file_path, 'rb') as file_obj:
-            return np.load(file_obj)
+        df = pd.read_csv(file_path)  # Read CSV into a DataFrame
+        return df.values  # Convert DataFrame to NumPy array
+    except FileNotFoundError:
+        raise thyroid_disease_detException(f"File not found: {file_path}", sys)
+    except pd.errors.EmptyDataError:
+        raise thyroid_disease_detException(f"Empty CSV file: {file_path}", sys)
+    except pd.errors.ParserError:
+        raise thyroid_disease_detException(f"Error parsing CSV file: {file_path}", sys)
     except Exception as e:
         raise thyroid_disease_detException(e, sys) from e
 
