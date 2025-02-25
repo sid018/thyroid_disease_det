@@ -5,6 +5,7 @@ import numpy as np
 import dill
 import yaml
 from pandas import DataFrame
+import pandas as pd
 
 from thyroid_disease_det.exception import thyroid_disease_detException
 from thyroid_disease_det.logger import logging
